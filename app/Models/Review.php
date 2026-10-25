@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Traits\AutoClearsCache;
+use KaziOmar\AtomicCache\Traits\AutoClearsCache;
 use App\Traits\FileUploadTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

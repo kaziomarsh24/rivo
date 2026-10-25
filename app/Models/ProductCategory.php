@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Traits\AutoClearsCache;
+use KaziOmar\AtomicCache\Traits\AutoClearsCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;

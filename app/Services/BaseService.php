@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Traits\Cacheable;
+use KaziOmar\AtomicCache\Traits\HasAtomicCache;
 use App\Traits\ManagesData;
 use Illuminate\Database\Eloquent\Model;
 use Closure;
@@ -21,7 +21,7 @@ use Spatie\QueryBuilder\QueryBuilder;
  */
 abstract class BaseService
 {
-    use ManagesData, Cacheable;
+    use ManagesData, HasAtomicCache;
 
     /**
      * The fully qualified class name of the model.
@@ -180,6 +180,14 @@ abstract class BaseService
     {
         return $this->getById($id)->delete();
     }
+
+    /**
+     * Invalidate one or more custom cache tags using AtomicCache.
+     *
+     * @param string|array $tags Tag name or array of tag names to flush.
+     */
+    public function flushCacheTags(string|array $tags): void
+    {
+        \KaziOmar\AtomicCache\Facades\AtomicCache::clearTags((array) $tags);
+    }
 }
-
-

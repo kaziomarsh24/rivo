@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Traits\AutoClearsCache;
+use KaziOmar\AtomicCache\Traits\AutoClearsCache;
 use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
