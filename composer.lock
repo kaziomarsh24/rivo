@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8c7e83f6f91a60da437605b9bc6de18c",
+    "content-hash": "7617082f8a6c5b8d7321a0d99882cbc2",
     "packages": [
         {
             "name": "beste/clock",
@@ -10126,16 +10126,16 @@
         },
         {
             "name": "thekaziomar/laravel-atomic-cache",
-            "version": "v1.1.1",
+            "version": "v1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kaziomarsh24/laravel-atomic-cache.git",
-                "reference": "e272af8dded0117300904512ea5d33a902f3d724"
+                "reference": "73c6e2416875ecf1e9cd2f4aa7d100d06724970a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kaziomarsh24/laravel-atomic-cache/zipball/e272af8dded0117300904512ea5d33a902f3d724",
-                "reference": "e272af8dded0117300904512ea5d33a902f3d724",
+                "url": "https://api.github.com/repos/kaziomarsh24/laravel-atomic-cache/zipball/73c6e2416875ecf1e9cd2f4aa7d100d06724970a",
+                "reference": "73c6e2416875ecf1e9cd2f4aa7d100d06724970a",
                 "shasum": ""
             },
             "require": {
@@ -10192,9 +10192,9 @@
             ],
             "support": {
                 "issues": "https://github.com/kaziomarsh24/laravel-atomic-cache/issues",
-                "source": "https://github.com/kaziomarsh24/laravel-atomic-cache/tree/v1.1.1"
+                "source": "https://github.com/kaziomarsh24/laravel-atomic-cache/tree/v1.1.2"
             },
-            "time": "2026-10-24T18:41:02+00:00"
+            "time": "2026-10-25T05:54:27+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
