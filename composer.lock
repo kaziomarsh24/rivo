@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1f421e6b413fc90c42019b34c19e3a8f",
+    "content-hash": "8c7e83f6f91a60da437605b9bc6de18c",
     "packages": [
         {
             "name": "beste/clock",
@@ -10123,6 +10123,78 @@
                 }
             ],
             "time": "2025-05-14T06:15:44+00:00"
+        },
+        {
+            "name": "thekaziomar/laravel-atomic-cache",
+            "version": "v1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kaziomarsh24/laravel-atomic-cache.git",
+                "reference": "e272af8dded0117300904512ea5d33a902f3d724"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kaziomarsh24/laravel-atomic-cache/zipball/e272af8dded0117300904512ea5d33a902f3d724",
+                "reference": "e272af8dded0117300904512ea5d33a902f3d724",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/cache": "^10.0 || ^11.0 || ^12.0 || ^13.0",
+                "illuminate/database": "^10.0 || ^11.0 || ^12.0 || ^13.0",
+                "illuminate/support": "^10.0 || ^11.0 || ^12.0 || ^13.0",
+                "php": "^8.2 || ^8.3 || ^8.4 || ^8.5 || ^8.6"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^8.0 || ^9.0 || ^10.0",
+                "phpunit/phpunit": "^10.0 || ^11.0"
+            },
+            "suggest": {
+                "ext-zlib": "Required for payload gzip compression on large cache items."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "AtomicCache": "KaziOmar\\AtomicCache\\Facades\\AtomicCache"
+                    },
+                    "providers": [
+                        "KaziOmar\\AtomicCache\\AtomicCacheServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/Helpers/helpers.php"
+                ],
+                "psr-4": {
+                    "KaziOmar\\AtomicCache\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kazi Omar Faruk",
+                    "email": "softeng.kaziomar@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A simple, stampede-proof, and tag-aware caching package for Laravel.",
+            "homepage": "https://github.com/kaziomarsh24/laravel-atomic-cache",
+            "keywords": [
+                "atomic",
+                "cache",
+                "laravel",
+                "redis",
+                "stampede-protection"
+            ],
+            "support": {
+                "issues": "https://github.com/kaziomarsh24/laravel-atomic-cache/issues",
+                "source": "https://github.com/kaziomarsh24/laravel-atomic-cache/tree/v1.1.1"
+            },
+            "time": "2026-10-24T18:41:02+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",

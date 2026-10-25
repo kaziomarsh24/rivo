@@ -94,7 +94,7 @@ class VendorPortalTest extends TestCase
 
         // Verify Redis cache tag & key exist for dashboard
         $cacheKey = "vendor:dashboard:{$this->store->id}:" . \Carbon\Carbon::today()->toDateString();
-        $this->assertTrue(\Illuminate\Support\Facades\Cache::tags(["stores:{$this->store->id}:dashboard", "stores:{$this->store->id}", 'stores'])->has($cacheKey));
+        $this->assertTrue(\KaziOmar\AtomicCache\Facades\AtomicCache::tags(["stores:{$this->store->id}:dashboard", "stores:{$this->store->id}", 'stores'])->has($cacheKey));
 
         // 2. Simulate order creation -> AutoClearsCache should instantly flush the dashboard cache!
         $customer = User::factory()->create();
@@ -110,7 +110,7 @@ class VendorPortalTest extends TestCase
         ]);
 
         $this->assertFalse(
-            \Illuminate\Support\Facades\Cache::tags(["stores:{$this->store->id}:dashboard", "stores:{$this->store->id}", 'stores'])->has($cacheKey),
+            \KaziOmar\AtomicCache\Facades\AtomicCache::tags(["stores:{$this->store->id}:dashboard", "stores:{$this->store->id}", 'stores'])->has($cacheKey),
             'Dashboard cache must be automatically invalidated when a new order is saved'
         );
 
@@ -122,7 +122,7 @@ class VendorPortalTest extends TestCase
         $newOrder->update(['status' => 'preparing']);
 
         $this->assertFalse(
-            \Illuminate\Support\Facades\Cache::tags(["stores:{$this->store->id}:dashboard", "stores:{$this->store->id}", 'stores'])->has($cacheKey),
+            \KaziOmar\AtomicCache\Facades\AtomicCache::tags(["stores:{$this->store->id}:dashboard", "stores:{$this->store->id}", 'stores'])->has($cacheKey),
             'Dashboard cache must be automatically invalidated when order status is updated'
         );
     }
