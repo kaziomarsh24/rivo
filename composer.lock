@@ -10126,26 +10126,29 @@
         },
         {
             "name": "thekaziomar/laravel-atomic-cache",
-            "version": "v1.3.2",
+            "version": "v1.3.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kaziomarsh24/laravel-atomic-cache.git",
-                "reference": "29348d8afdb4d70a12317e63944c16ccd4722494"
+                "reference": "b4950421c30f94ec8ca4a0fcac912b77cb459615"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kaziomarsh24/laravel-atomic-cache/zipball/29348d8afdb4d70a12317e63944c16ccd4722494",
-                "reference": "29348d8afdb4d70a12317e63944c16ccd4722494",
+                "url": "https://api.github.com/repos/kaziomarsh24/laravel-atomic-cache/zipball/b4950421c30f94ec8ca4a0fcac912b77cb459615",
+                "reference": "b4950421c30f94ec8ca4a0fcac912b77cb459615",
                 "shasum": ""
             },
             "require": {
                 "illuminate/cache": "^10.0 || ^11.0 || ^12.0 || ^13.0",
+                "illuminate/console": "^10.0 || ^11.0 || ^12.0 || ^13.0",
+                "illuminate/contracts": "^10.0 || ^11.0 || ^12.0 || ^13.0",
                 "illuminate/database": "^10.0 || ^11.0 || ^12.0 || ^13.0",
+                "illuminate/http": "^10.0 || ^11.0 || ^12.0 || ^13.0",
                 "illuminate/support": "^10.0 || ^11.0 || ^12.0 || ^13.0",
-                "php": "^8.2 || ^8.3 || ^8.4 || ^8.5 || ^8.6"
+                "php": "^8.2"
             },
             "require-dev": {
-                "orchestra/testbench": "^8.0 || ^9.0 || ^10.0",
+                "orchestra/testbench": "^8.0 || ^9.0 || ^10.0 || ^11.0",
                 "phpunit/phpunit": "^10.0 || ^11.0"
             },
             "suggest": {
@@ -10181,20 +10184,24 @@
                     "role": "Developer"
                 }
             ],
-            "description": "A simple, stampede-proof, and tag-aware caching package for Laravel.",
+            "description": "Zero-headache, stampede-proof, and auto-invalidating caching for Laravel. Cache database queries in 2 lines without managing keys or observers.",
             "homepage": "https://github.com/kaziomarsh24/laravel-atomic-cache",
             "keywords": [
-                "atomic",
+                "auto-invalidation",
                 "cache",
+                "compression",
+                "eloquent",
                 "laravel",
+                "performance",
+                "query-cache",
                 "redis",
                 "stampede-protection"
             ],
             "support": {
                 "issues": "https://github.com/kaziomarsh24/laravel-atomic-cache/issues",
-                "source": "https://github.com/kaziomarsh24/laravel-atomic-cache/tree/v1.3.2"
+                "source": "https://github.com/kaziomarsh24/laravel-atomic-cache/tree/v1.3.8"
             },
-            "time": "2026-10-25T10:35:11+00:00"
+            "time": "2026-10-26T10:06:48+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
