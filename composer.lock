@@ -10126,16 +10126,16 @@
         },
         {
             "name": "thekaziomar/laravel-atomic-cache",
-            "version": "v1.3.8",
+            "version": "v1.3.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kaziomarsh24/laravel-atomic-cache.git",
-                "reference": "b4950421c30f94ec8ca4a0fcac912b77cb459615"
+                "reference": "f3eb9de7538d6755ab756ded2b8053fb54b3c5dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kaziomarsh24/laravel-atomic-cache/zipball/b4950421c30f94ec8ca4a0fcac912b77cb459615",
-                "reference": "b4950421c30f94ec8ca4a0fcac912b77cb459615",
+                "url": "https://api.github.com/repos/kaziomarsh24/laravel-atomic-cache/zipball/f3eb9de7538d6755ab756ded2b8053fb54b3c5dd",
+                "reference": "f3eb9de7538d6755ab756ded2b8053fb54b3c5dd",
                 "shasum": ""
             },
             "require": {
@@ -10199,9 +10199,9 @@
             ],
             "support": {
                 "issues": "https://github.com/kaziomarsh24/laravel-atomic-cache/issues",
-                "source": "https://github.com/kaziomarsh24/laravel-atomic-cache/tree/v1.3.8"
+                "source": "https://github.com/kaziomarsh24/laravel-atomic-cache/tree/v1.3.10"
             },
-            "time": "2026-10-26T10:06:48+00:00"
+            "time": "2026-10-26T12:18:23+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
