@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use KaziOmar\AtomicCache\Traits\AutoClearsCache;
+use KaziOmar\SmartUpload\Traits\HasUploadPurge;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Store extends Model
 {
-    use HasFactory, SoftDeletes, AutoClearsCache;
+    use HasFactory, SoftDeletes, AutoClearsCache, HasUploadPurge;
+
+    /**
+     * HasUploadPurge: Automatically cleans up old logos and banners from storage disk
+     * when they are updated/replaced or when the store record is deleted.
+     */
+    protected array $purgeableFiles = ['logo', 'banner'];
 
     protected $fillable = [
         'user_id',

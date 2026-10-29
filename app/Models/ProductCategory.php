@@ -3,13 +3,20 @@
 namespace App\Models;
 
 use KaziOmar\AtomicCache\Traits\AutoClearsCache;
+use KaziOmar\SmartUpload\Traits\HasUploadPurge;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProductCategory extends Model
 {
-    use HasFactory, AutoClearsCache;
+    use HasFactory, AutoClearsCache, HasUploadPurge;
+
+    /**
+     * HasUploadPurge: Automatically cleans up old category icons from storage disk
+     * when the icon is updated or when the category is deleted.
+     */
+    protected array $purgeableFiles = ['icon'];
 
     protected $fillable = [
         'name',

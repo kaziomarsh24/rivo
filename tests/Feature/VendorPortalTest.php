@@ -26,6 +26,8 @@ class VendorPortalTest extends TestCase
     {
         parent::setUp();
 
+        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'vendor', 'guard_name' => 'web']);
+
         $this->vendorUser = User::firstOrCreate(
             ['email' => 'vendor_test_user@yopmail.com'],
             ['name' => 'Sarah Vendor', 'password' => bcrypt('password123')]

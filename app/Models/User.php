@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use KaziOmar\AtomicCache\Traits\AutoClearsCache;
+use KaziOmar\SmartUpload\Traits\HasUploadPurge;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -24,6 +25,17 @@ class User extends Authenticatable
     use HasFactory, Notifiable, HasRoles, HasApiTokens, Billable, LogsActivity;
 
     use AutoClearsCache; // Magic Starts Here!
+
+    /**
+     * HasUploadPurge: Automatically cleans up old profile photos from storage disk
+     * when the avatar is updated, or purges the file if the user account is deleted.
+     */
+    use HasUploadPurge;
+
+    /**
+     * File attributes that should be purged automatically by HasUploadPurge.
+     */
+    protected array $purgeableFiles = ['avatar'];
 
     /**
      * The attributes that are mass assignable.

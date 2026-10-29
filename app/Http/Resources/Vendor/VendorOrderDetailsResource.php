@@ -191,7 +191,7 @@ class VendorOrderDetailsResource extends JsonResource
                     'formatted_price' => '$' . number_format($item->price, 2),
                     'total' => (float) $item->total,
                     'formatted_total' => '$' . number_format($item->total, 2),
-                    'image' => format_media_url($rawImg, 'products'),
+                    'image' => upload_url($rawImg, defaultDir: 'products'),
                 ];
             })->toArray();
         }
@@ -212,7 +212,7 @@ class VendorOrderDetailsResource extends JsonResource
                 'id' => $this->user?->id,
                 'name' => $customerName,
                 'initials' => $initials ?: 'CU',
-                'avatar' => format_media_url($this->user?->avatar, 'avatars'),
+                'avatar' => upload_url($this->user?->avatar, defaultDir: 'avatars'),
                 'phone' => $this->user?->phone_number,
                 'email' => $this->user?->email,
                 'delivery_type' => $this->delivery_type ?: 'delivery',

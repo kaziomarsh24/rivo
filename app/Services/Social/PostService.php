@@ -8,6 +8,7 @@ use App\Models\WalkSession;
 use App\Services\BaseService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use KaziOmar\SmartUpload\Facades\Upload;
 
 class PostService extends BaseService
 {
@@ -69,7 +70,7 @@ class PostService extends BaseService
 
             if (!empty($mediaFiles)) {
                 foreach ($mediaFiles as $index => $file) {
-                    $path = $file->store('posts', 'public');
+                    $path = Upload::file($file)->save('posts')->path;
                     $mediaType = str_starts_with($file->getMimeType(), 'video') ? 'video' : 'image';
                     $post->media()->create([
                         'media_path' => $path,
@@ -102,11 +103,10 @@ class PostService extends BaseService
                 $post->update($updateData);
             }
 
-            // Remove specific media files if requested
+            // Remove specific media files if requested (HasUploadPurge handles disk cleanup)
             if (!empty($data['remove_media_ids'])) {
                 $mediaToRemove = $post->media()->whereIn('id', $data['remove_media_ids'])->get();
                 foreach ($mediaToRemove as $media) {
-                    Storage::disk('public')->delete($media->media_path);
                     $media->delete();
                 }
             }
@@ -115,7 +115,7 @@ class PostService extends BaseService
             if (!empty($mediaFiles)) {
                 $highestOrder = (int) $post->media()->max('order');
                 foreach ($mediaFiles as $index => $file) {
-                    $path = $file->store('posts', 'public');
+                    $path = Upload::file($file)->save('posts')->path;
                     $mediaType = str_starts_with($file->getMimeType(), 'video') ? 'video' : 'image';
                     $post->media()->create([
                         'media_path' => $path,

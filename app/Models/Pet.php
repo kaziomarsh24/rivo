@@ -6,12 +6,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Concerns\ComputesCompatibility;
 use KaziOmar\AtomicCache\Traits\AutoClearsCache;
+use KaziOmar\SmartUpload\Traits\HasUploadPurge;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Pet extends Model
 {
-    use HasFactory, AutoClearsCache, ComputesCompatibility;
+    /**
+     * HasUploadPurge: Automatically cleans up physical pet photos from storage disk
+     * when the photo is updated/replaced or when the pet profile is deleted.
+     */
+    use HasFactory, AutoClearsCache, ComputesCompatibility, HasUploadPurge;
+
+    /**
+     * File attributes that should be purged automatically by HasUploadPurge.
+     */
+    protected array $purgeableFiles = ['photo'];
 
     protected $fillable = [
         'user_id',

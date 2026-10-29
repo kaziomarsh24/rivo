@@ -7,14 +7,15 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Store;
 use App\Services\BaseService;
-use App\Traits\FileUploadTrait;
+use KaziOmar\SmartUpload\DTO\UploadResult;
+use KaziOmar\SmartUpload\Facades\Upload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Spatie\QueryBuilder\AllowedFilter;
 
 class ProductService extends BaseService
 {
-    use FileUploadTrait;
+
 
     protected string $modelClass = Product::class;
 
@@ -105,11 +106,10 @@ class ProductService extends BaseService
     {
         $slug = Str::slug($data['name']) . '-' . Str::lower(Str::random(5));
 
-        // 1. Handle uploaded image files via FileUploadTrait (converts to optimized WebP)
-        $uploadedImages = [];
-        if ($request->hasFile('images')) {
-            $uploadedImages = $this->handleMultipleFileUpload($request, 'images', 'products', forceWebp: true);
-        }
+        // 1. Handle uploaded image files via Smart Upload (converts to optimized WebP)
+        $uploadedImages = $request->hasFile('images')
+            ? Upload::request($request, 'images')->scaleDown(1200)->toWebp(85)->save('products')->paths()
+            : [];
 
         // 2. Collect any existing string URLs passed via JSON body or form fields
         $urlImages = [];
@@ -166,10 +166,9 @@ class ProductService extends BaseService
         $currentImages = (array) ($product->images ?: []);
 
         // 1. Upload any newly provided image files
-        $newUploadedImages = [];
-        if ($request->hasFile('images')) {
-            $newUploadedImages = $this->handleMultipleFileUpload($request, 'images', 'products', forceWebp: true);
-        }
+        $newUploadedImages = $request->hasFile('images')
+            ? Upload::request($request, 'images')->scaleDown(1200)->toWebp(85)->save('products')->paths()
+            : [];
 
         // 2. Merge or replace images
         if (array_key_exists('images', $data) && is_array($data['images'])) {

@@ -13,7 +13,7 @@ class StoreDocumentResource extends JsonResource
             'id' => $this->id,
             'store_id' => $this->store_id,
             'type' => $this->type,
-            'file_url' => format_media_url($this->file_path, 'stores/documents'),
+            'file_url' => upload_url($this->file_path, defaultDir: 'stores/documents'),
             'original_name' => $this->original_name,
             'status' => $this->status,
             'rejection_reason' => $this->rejection_reason,

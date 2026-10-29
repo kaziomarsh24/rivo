@@ -11,9 +11,9 @@ class PostMediaResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'media_url' => url('storage/' . $this->media_path),
+            'media_url' => upload_url($this->media_path),
             'media_type' => $this->media_type,
-            'thumbnail_url' => $this->thumbnail_path ? url('storage/' . $this->thumbnail_path) : null,
+            'thumbnail_url' => upload_url($this->thumbnail_path),
             'order' => $this->order,
         ];
     }

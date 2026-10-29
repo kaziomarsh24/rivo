@@ -6,7 +6,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use App\Traits\FileUploadTrait;
+use KaziOmar\SmartUpload\Facades\Upload;
 use Illuminate\Http\Request;
 use App\Notifications\Auth\SendOtpNotification;
 use App\Notifications\TestLoginPushNotification;
@@ -17,7 +17,7 @@ use Laravel\Socialite\Facades\Socialite;
 
 class AuthService
 {
-    use FileUploadTrait;
+
     
     /**
      * Registers a new user and sends OTP/verification link.
@@ -295,17 +295,12 @@ class AuthService
 
 
         if ($request->hasFile('avatar')) {
-            // Delete old file if exists
-            if ($user->avatar    ) {
-                $this->deleteFile($user->avatar);
-            }
-
-
-            $path = $this->handleFileUpload($request, 'avatar', 'avatars', 400, 400, 80, true);
-
-
-            $validatedData['avatar'] = $path;
-            // unset($validatedData['avatar']);
+            $validatedData['avatar'] = Upload::file($request->file('avatar'))
+                ->scaleDown(400, 400)
+                ->toWebp(80)
+                ->replace($user->avatar)
+                ->save('avatars')
+                ->path;
         }
 
         $user->update($validatedData);

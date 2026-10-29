@@ -24,7 +24,7 @@ class OrderDetailsResource extends JsonResource
                     'id' => $this->store->id,
                     'name' => $this->store->name,
                     'slug' => $this->store->slug,
-                    'logo' => $this->store->logo,
+                    'logo' => upload_url($this->store->logo, defaultDir: 'stores/logos'),
                     'phone' => $this->store->phone,
                     'street_address' => $this->store->street_address,
                 ];
@@ -42,7 +42,7 @@ class OrderDetailsResource extends JsonResource
                         'price' => (float) $item->price,
                         'quantity' => (int) $item->quantity,
                         'total' => (float) $item->total,
-                        'image' => $item->image,
+                        'image' => upload_url($item->image, defaultDir: 'products'),
                     ];
                 });
             }),

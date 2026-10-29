@@ -14,11 +14,11 @@ class ReviewResource extends JsonResource
     public function toArray(Request $request): array
     {
         $userName = $this->is_anonymous ? 'Anonymous User' : ($this->user?->name ?? 'Customer');
-        $userAvatar = $this->is_anonymous ? null : format_media_url($this->user?->avatar, 'avatars');
+        $userAvatar = $this->is_anonymous ? null : upload_url($this->user?->avatar, defaultDir: 'avatars');
 
         $photos = [];
         if (!empty($this->photos) && is_array($this->photos)) {
-            $photos = array_values(array_map(fn($p) => format_media_url($p, 'reviews'), $this->photos));
+            $photos = array_values(array_map(fn($p) => upload_url($p, defaultDir: 'reviews'), $this->photos));
         }
 
         $type = $this->reviewable_type;

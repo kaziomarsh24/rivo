@@ -9,14 +9,15 @@ use App\Models\Review;
 use App\Models\Store;
 use App\Models\User;
 use App\Services\BaseService;
-use App\Traits\FileUploadTrait;
+use KaziOmar\SmartUpload\DTO\UploadResult;
+use KaziOmar\SmartUpload\Facades\Upload;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class ReviewService extends BaseService
 {
-    use FileUploadTrait;
+
 
     protected string $modelClass = Review::class;
 
@@ -108,23 +109,8 @@ class ReviewService extends BaseService
             }
         }
 
-        // Upload and optimize images via FileUploadTrait (scaled to max 1200px, converted to WebP format)
-        $uploadedPhotos = $this->handleMultipleFileUpload(
-            $request,
-            'photos',
-            'reviews',
-            width: 1200,
-            quality: 85,
-            forceWebp: true
-        );
-
-        // Fallback for legacy single field 'photo' if sent
-        if (empty($uploadedPhotos) && $request->hasFile('photo')) {
-            $legacyPath = $this->handleFileUpload($request, 'photo', 'reviews', width: 1200, quality: 85, forceWebp: true);
-            if ($legacyPath) {
-                $uploadedPhotos = [$legacyPath];
-            }
-        }
+        // Upload and optimize images via Smart Upload (scaled to max 1200px, converted to WebP format)
+        $uploadedPhotos = Upload::request($request, 'photos')->scaleDown(1200)->toWebp(85)->save('reviews')->paths();
 
         $rating = max(1, min(5, (int) $data['rating']));
 
@@ -211,24 +197,14 @@ class ReviewService extends BaseService
 
         $existingPhotos = $review->photos ?? [];
 
-        // Remove any specific photos requested by client
+        // Remove any specific photos requested by client (HasUploadPurge diffing handles disk cleanup on save)
         if (!empty($data['remove_photos']) && is_array($data['remove_photos'])) {
-            foreach ($data['remove_photos'] as $removePath) {
-                $this->deleteFile($removePath);
-                $existingPhotos = array_values(array_filter($existingPhotos, fn($p) => $p !== $removePath));
-            }
+            $existingPhotos = array_values(array_filter($existingPhotos, fn($p) => !in_array($p, $data['remove_photos'])));
         }
 
-        // Upload and optimize new photos via FileUploadTrait
+        // Upload and optimize new photos via Smart Upload
         if ($request->hasFile('photos')) {
-            $newPhotos = $this->handleMultipleFileUpload(
-                $request,
-                'photos',
-                'reviews',
-                width: 1200,
-                quality: 85,
-                forceWebp: true
-            );
+            $newPhotos = Upload::request($request, 'photos')->scaleDown(1200)->toWebp(85)->save('reviews')->paths();
             $existingPhotos = array_merge($existingPhotos, $newPhotos);
         }
 

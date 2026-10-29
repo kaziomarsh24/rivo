@@ -30,7 +30,7 @@ class ConversationResource extends JsonResource
                 return $other ? [
                     'id' => $other->id,
                     'name' => $other->name,
-                    'avatar' => $other->avatar ? (str_starts_with($other->avatar, 'http') ? $other->avatar : asset('storage/' . $other->avatar)) : null,
+                    'avatar' => upload_url($other->avatar, defaultDir: 'avatars'),
                 ] : null;
             }),
             'users' => $this->whenLoaded('users', function () {
@@ -38,7 +38,7 @@ class ConversationResource extends JsonResource
                     return [
                         'id' => $user->id,
                         'name' => $user->name,
-                        'avatar' => $user->avatar ? (str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . $user->avatar)) : null,
+                        'avatar' => upload_url($user->avatar, defaultDir: 'avatars'),
                     ];
                 });
             }),

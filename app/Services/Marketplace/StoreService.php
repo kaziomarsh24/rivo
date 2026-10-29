@@ -13,7 +13,7 @@ use App\Http\Resources\Marketplace\ProductCardResource;
 use App\Services\Marketplace\ProductService;
 use App\Services\Marketplace\ReviewService;
 use App\Services\BaseService;
-use App\Traits\FileUploadTrait;
+use KaziOmar\SmartUpload\Facades\Upload;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedInclude;
 use Carbon\Carbon;
@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Cache;
 
 class StoreService extends BaseService
 {
-    use FileUploadTrait;
+
 
     protected string $modelClass = Store::class;
 
@@ -82,20 +82,24 @@ class StoreService extends BaseService
         // 2. Handle logo and banner uploads (with WebP conversion and old image cleanup)
         $logoPath = null;
         if ($request->hasFile('logo')) {
-            if ($existingStore && $existingStore->logo) {
-                $this->deleteFile($existingStore->logo);
-            }
-            $logoPath = $this->handleFileUpload($request, 'logo', 'stores/logos', 400, 400, 90, true);
+            $logoPath = Upload::file($request->file('logo'))
+                ->scaleDown(400, 400)
+                ->toWebp(90)
+                ->replace($existingStore?->logo)
+                ->save('stores/logos')
+                ->path;
         } elseif ($existingStore) {
             $logoPath = $existingStore->logo;
         }
 
         $bannerPath = null;
         if ($request->hasFile('banner')) {
-            if ($existingStore && $existingStore->banner) {
-                $this->deleteFile($existingStore->banner);
-            }
-            $bannerPath = $this->handleFileUpload($request, 'banner', 'stores/banners', 1200, 600, 90, true);
+            $bannerPath = Upload::file($request->file('banner'))
+                ->scaleDown(1200, 600)
+                ->toWebp(90)
+                ->replace($existingStore?->banner)
+                ->save('stores/banners')
+                ->path;
         } elseif ($existingStore) {
             $bannerPath = $existingStore->banner;
         }
@@ -153,18 +157,22 @@ class StoreService extends BaseService
     {
         // 1. Handle logo upload (WebP) and delete old file
         if ($request->hasFile('logo')) {
-            if ($store->logo) {
-                $this->deleteFile($store->logo);
-            }
-            $store->logo = $this->handleFileUpload($request, 'logo', 'stores/logos', 400, 400, 90, true);
+            $store->logo = Upload::file($request->file('logo'))
+                ->scaleDown(400, 400)
+                ->toWebp(90)
+                ->replace($store->logo)
+                ->save('stores/logos')
+                ->path;
         }
 
         // 2. Handle banner upload (WebP) and delete old file
         if ($request->hasFile('banner')) {
-            if ($store->banner) {
-                $this->deleteFile($store->banner);
-            }
-            $store->banner = $this->handleFileUpload($request, 'banner', 'stores/banners', 1200, 600, 90, true);
+            $store->banner = Upload::file($request->file('banner'))
+                ->scaleDown(1200, 600)
+                ->toWebp(90)
+                ->replace($store->banner)
+                ->save('stores/banners')
+                ->path;
         }
 
         // 3. Update fillable fields if present
@@ -203,7 +211,7 @@ class StoreService extends BaseService
         foreach ($docTypes as $key => $type) {
             if ($request->hasFile($key)) {
                 $file = $request->file($key);
-                $filePath = $file->store('stores/documents', 'public');
+                $filePath = Upload::file($file)->keepOriginalFormat()->save('stores/documents')->path;
 
                 StoreDocument::create([
                     'store_id' => $store->id,
@@ -222,7 +230,7 @@ class StoreService extends BaseService
     public function uploadDocument(Store $store, array $data, Request $request): StoreDocument
     {
         $file = $request->file('document');
-        $filePath = $file->store('stores/documents', 'public');
+        $filePath = Upload::file($file)->keepOriginalFormat()->save('stores/documents')->path;
 
         $doc = StoreDocument::create([
             'store_id' => $store->id,
@@ -242,10 +250,6 @@ class StoreService extends BaseService
      */
     public function deleteDocument(Store $store, StoreDocument $document): bool
     {
-        if ($document->file_path) {
-            $this->deleteFile($document->file_path);
-        }
-
         $deleted = $document->delete();
 
         $this->flushCacheTags(['stores', "stores:{$store->id}"]);

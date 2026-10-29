@@ -15,7 +15,7 @@ class ProductCardResource extends JsonResource
             : 0;
 
         $rawImages = is_array($this->images) ? $this->images : [];
-        $images = array_values(array_filter(array_map(fn($img) => format_media_url($img, 'products'), $rawImages)));
+        $images = array_values(array_filter(array_map(fn($img) => upload_url($img, defaultDir: 'products'), $rawImages)));
         $primaryImage = !empty($images) ? $images[0] : null;
 
         return [
@@ -45,7 +45,7 @@ class ProductCardResource extends JsonResource
                     'id' => $this->brand->id,
                     'name' => $this->brand->name,
                     'slug' => $this->brand->slug,
-                    'logo' => format_media_url($this->brand->logo, 'brands/logos'),
+                    'logo' => upload_url($this->brand->logo, defaultDir: 'brands/logos'),
                 ] : null;
             }),
             'store' => $this->whenLoaded('store', function () {
@@ -57,7 +57,7 @@ class ProductCardResource extends JsonResource
                     'reviews_count' => (int) $this->store->reviews_count,
                     'delivery_time_text' => $this->store->delivery_time_text ?: '~15 min',
                     'delivery_fee' => (float) $this->store->delivery_fee,
-                    'logo' => format_media_url($this->store->logo, 'stores/logos'),
+                    'logo' => upload_url($this->store->logo, defaultDir: 'stores/logos'),
                 ] : null;
             }),
             'category' => $this->whenLoaded('category', function () {
@@ -65,7 +65,7 @@ class ProductCardResource extends JsonResource
                     'id' => $this->category->id,
                     'name' => $this->category->name,
                     'slug' => $this->category->slug,
-                    'icon' => format_media_url($this->category->icon, 'categories'),
+                    'icon' => upload_url($this->category->icon, defaultDir: 'categories'),
                 ] : null;
             }),
             'variants' => $this->whenLoaded('variants', function () {

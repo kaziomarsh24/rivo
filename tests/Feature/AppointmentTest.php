@@ -19,6 +19,8 @@ class AppointmentTest extends TestCase
     {
         parent::setUp();
 
+        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'user', 'guard_name' => 'web']);
+
         $this->user = User::firstOrCreate(
             ['email' => 'test_appointment_user@yopmail.com'],
             ['name' => 'Appointment Test User', 'password' => bcrypt('password123')]

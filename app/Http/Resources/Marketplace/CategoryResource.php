@@ -14,7 +14,7 @@ class CategoryResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'subtitle' => $this->subtitle,
-            'icon' => format_media_url($this->icon, 'categories'),
+            'icon' => upload_url($this->icon, defaultDir: 'categories'),
             'order_column' => $this->order_column,
             'products_count' => (int) ($this->products_count ?? 0),
         ];

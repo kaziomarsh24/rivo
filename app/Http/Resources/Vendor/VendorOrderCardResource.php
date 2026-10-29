@@ -68,7 +68,7 @@ class VendorOrderCardResource extends JsonResource
         if ($this->relationLoaded('items') && $this->items->isNotEmpty()) {
             $firstItem = $this->items->first();
             $rawImg = $firstItem->image ?: ($firstItem->product?->images[0] ?? null);
-            $primaryItemImage = format_media_url($rawImg, 'products');
+            $primaryItemImage = upload_url($rawImg, defaultDir: 'products');
         }
 
         // 7. Action buttons availability matching Figma UI
@@ -91,7 +91,7 @@ class VendorOrderCardResource extends JsonResource
                 'id' => $this->user?->id,
                 'name' => $customerName,
                 'initials' => $initials ?: 'CU',
-                'avatar' => format_media_url($this->user?->avatar, 'avatars'),
+                'avatar' => upload_url($this->user?->avatar, defaultDir: 'avatars'),
                 'phone' => $this->user?->phone_number,
                 'email' => $this->user?->email,
             ],

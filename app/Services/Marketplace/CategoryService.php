@@ -4,15 +4,13 @@ namespace App\Services\Marketplace;
 
 use App\Models\ProductCategory;
 use App\Services\BaseService;
-use App\Traits\FileUploadTrait;
+use KaziOmar\SmartUpload\Facades\Upload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Spatie\QueryBuilder\AllowedFilter;
 
 class CategoryService extends BaseService
 {
-    use FileUploadTrait;
-
     protected string $modelClass = ProductCategory::class;
 
     protected function getAllowedFilters(): array
@@ -35,8 +33,8 @@ class CategoryService extends BaseService
     }
 
     /**
-     * Retrieve all active categories ordered by order_column with active products count.
-     * (Optimized for Customer Marketplace / Mobile App home & category pills)
+     * Get all active root categories with their child categories.
+     * Cached with the 'categories' tag.
      */
     public function getActiveCategories()
     {
@@ -50,7 +48,7 @@ class CategoryService extends BaseService
     }
 
     /**
-     * Create a new category with icon upload support.
+     * Create a new category with optional icon upload.
      * (For Admin Portal & Management)
      */
     public function createCategory(array $data, ?Request $request = null): ProductCategory
@@ -60,7 +58,11 @@ class CategoryService extends BaseService
         }
 
         if ($request && $request->hasFile('icon')) {
-            $data['icon'] = $this->handleFileUpload($request, 'icon', 'categories', 200, 200, 90, false);
+            $data['icon'] = Upload::file($request->file('icon'))
+                ->scaleDown(200, 200)
+                ->keepOriginalFormat()
+                ->save('categories')
+                ->path;
         }
 
         /** @var ProductCategory $category */
@@ -71,15 +73,16 @@ class CategoryService extends BaseService
 
     /**
      * Update an existing category with icon file replacement.
-     * (For Admin Portal & Management)
+     * Note: Old icon is automatically purged by ProductCategory's HasUploadPurge trait on model update.
      */
     public function updateCategory(ProductCategory $category, array $data, ?Request $request = null): ProductCategory
     {
         if ($request && $request->hasFile('icon')) {
-            if ($category->icon) {
-                $this->deleteFile($category->icon);
-            }
-            $data['icon'] = $this->handleFileUpload($request, 'icon', 'categories', 200, 200, 90, false);
+            $data['icon'] = Upload::file($request->file('icon'))
+                ->scaleDown(200, 200)
+                ->keepOriginalFormat()
+                ->save('categories')
+                ->path;
         }
 
         /** @var ProductCategory $updated */
@@ -90,14 +93,10 @@ class CategoryService extends BaseService
 
     /**
      * Delete a category and clean up its stored icon file.
-     * (For Admin Portal & Management)
+     * Note: Icon is automatically purged by ProductCategory's HasUploadPurge trait on model delete.
      */
     public function deleteCategory(ProductCategory $category): bool
     {
-        if ($category->icon) {
-            $this->deleteFile($category->icon);
-        }
-
         return (bool) $this->delete($category->id);
     }
 }

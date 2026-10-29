@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Chat\MessageResource;
 use App\Models\Conversation;
 use App\Models\Message;
-use App\Traits\FileUploadTrait;
+use KaziOmar\SmartUpload\Facades\Upload;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\DB;
  */
 class MessageController extends Controller
 {
-    use AuthorizesRequests, FileUploadTrait;
+    use AuthorizesRequests;
 
     // Show messages in a conversation
     public function index(Request $request, Conversation $conversation)
@@ -57,7 +57,7 @@ class MessageController extends Controller
         $mediaPath = null;
         $mediaType = null;
         if ($request->hasFile('media')) {
-            $mediaPath = $this->handleFileUpload($request, 'media', 'chat_media');
+            $mediaPath = Upload::file($request->file('media'))->save('chat_media')->path;
             $mediaType = explode('/', $request->file('media')->getMimeType())[0];
         }
 

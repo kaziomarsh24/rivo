@@ -24,6 +24,9 @@ class MarketplaceTest extends TestCase
     {
         parent::setUp();
 
+        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'user', 'guard_name' => 'web']);
+        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'vendor', 'guard_name' => 'web']);
+
         $this->customer = User::firstOrCreate(
             ['email' => 'test_customer@yopmail.com'],
             ['name' => 'Test Customer', 'password' => bcrypt('password123')]

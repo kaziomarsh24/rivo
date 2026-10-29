@@ -8,6 +8,7 @@ use App\Models\PetWeightLog;
 use App\Services\Ai\RivoAiService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use KaziOmar\SmartUpload\Facades\Upload;
 
 class HealthVaultService
 {
@@ -71,7 +72,7 @@ class HealthVaultService
             throw new \Exception('Free plan limit reached. Upgrade to Rivo Plus to store unlimited documents.', 403);
         }
 
-        $path = $file->store('health_documents/' . $pet->id, 'public');
+        $path = Upload::file($file)->keepOriginalFormat()->save('health_documents/' . $pet->id)->path;
         
         $extension = strtolower($file->getClientOriginalExtension());
         $type = in_array($extension, ['jpg', 'jpeg', 'png']) ? 'image' : 'pdf';
@@ -86,7 +87,6 @@ class HealthVaultService
 
     public function deleteDocument(HealthDocument $document): bool
     {
-        Storage::disk('public')->delete($document->file_path);
         return $document->delete();
     }
 

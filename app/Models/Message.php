@@ -50,7 +50,7 @@ class Message extends Model
     //media url accessor to return full url
     public function getMediaUrlAttribute($value)
     {
-        return $value ? asset('storage/' . $value) : null;
+        return upload_url($value);
     }
 
     protected function casts(): array

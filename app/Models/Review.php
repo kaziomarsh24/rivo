@@ -3,7 +3,8 @@
 namespace App\Models;
 
 use KaziOmar\AtomicCache\Traits\AutoClearsCache;
-use App\Traits\FileUploadTrait;
+use KaziOmar\SmartUpload\Facades\Upload;
+use KaziOmar\SmartUpload\Traits\HasUploadPurge;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,16 @@ use Illuminate\Support\Facades\Cache;
 
 class Review extends Model
 {
-    use HasFactory, AutoClearsCache, FileUploadTrait;
+    /**
+     * HasUploadPurge: Automatically cleans up physical review photos from storage disk
+     * with Smart Array Diffing on update, and purges all photos when review is deleted.
+     */
+    use HasFactory, AutoClearsCache, HasUploadPurge;
+
+    /**
+     * File attributes that should be purged automatically by HasUploadPurge.
+     */
+    protected array $purgeableFiles = ['photos'];
 
     protected $fillable = [
         'user_id',
@@ -33,11 +43,13 @@ class Review extends Model
 
     protected static function booted(): void
     {
-        // When a review is deleted, clean up physical files via FileUploadTrait and recalculate ratings
+        // When a review is deleted, clean up physical files via Smart Upload and recalculate ratings
         static::deleted(function (Review $review) {
-            // 1. Delete physical photo files from disk using centralized FileUploadTrait
+            // 1. Delete physical photo files from disk using Smart Upload
             if (!empty($review->photos) && is_array($review->photos)) {
-                $review->deleteMultipleFiles($review->photos);
+                foreach ($review->photos as $photo) {
+                    Upload::delete($photo);
+                }
             }
 
             // 2. Recalculate parent Product or Store rating and reviews_count

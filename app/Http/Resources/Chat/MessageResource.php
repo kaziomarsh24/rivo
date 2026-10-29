@@ -32,7 +32,7 @@ class MessageResource extends JsonResource
             'sender' => $this->user_id ? [
                 'id' => $this->user?->id,
                 'name' => $this->user?->name,
-                'avatar' => $this->user?->avatar ? (str_starts_with($this->user->avatar, 'http') ? $this->user->avatar : asset('storage/' . $this->user->avatar)) : null,
+                'avatar' => upload_url($this->user?->avatar, defaultDir: 'avatars'),
             ] : null,
             'is_sender' => $isSender,
             'is_read' => (bool) $this->is_read,

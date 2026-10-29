@@ -8,12 +8,12 @@ use App\Services\BaseService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Spatie\QueryBuilder\AllowedFilter;
-use App\Traits\FileUploadTrait;
+use KaziOmar\SmartUpload\Facades\Upload;
 use Illuminate\Http\Request;
 
 class LostPetReportService extends BaseService
 {
-    use FileUploadTrait;
+
     protected string $modelClass = LostPetReport::class;
 
     // Disable caching for this service as reports need to be very real-time
@@ -54,10 +54,12 @@ class LostPetReportService extends BaseService
                 throw new \Exception("An active lost report already exists for this pet.");
             }
             
-            $filePath = $this->handleFileUpload($request, 'last_seen_photo', 'lost_pets', 800, null, 80, true);
-            
-            if ($filePath) {
-                $data['last_seen_photo'] = $filePath;
+            if ($request->hasFile('last_seen_photo')) {
+                $data['last_seen_photo'] = Upload::file($request->file('last_seen_photo'))
+                    ->scaleDown(width: 800)
+                    ->toWebp(80)
+                    ->save('lost_pets')
+                    ->path;
             }
 
             $data['pet_id'] = $pet->id;

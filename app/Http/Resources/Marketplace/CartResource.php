@@ -29,7 +29,7 @@ class CartResource extends JsonResource
             $itemTotal = round($unitPrice * $item->quantity, 2);
 
             $rawImages = $product && is_array($product->images) ? $product->images : [];
-            $images = array_values(array_filter(array_map(fn($img) => format_media_url($img, 'products'), $rawImages)));
+            $images = array_values(array_filter(array_map(fn($img) => upload_url($img, defaultDir: 'products'), $rawImages)));
             $primaryImage = !empty($images) ? $images[0] : null;
 
             $variantText = [];
@@ -62,7 +62,7 @@ class CartResource extends JsonResource
                 'id' => $store->id,
                 'name' => $store->name,
                 'slug' => $store->slug ?? null,
-                'logo' => format_media_url($store->logo, 'stores/logos'),
+                'logo' => upload_url($store->logo, defaultDir: 'stores/logos'),
                 'delivery_fee' => (float) $store->delivery_fee,
                 'delivery_time_text' => $store->delivery_time_text ?: '~15 min',
             ] : null,

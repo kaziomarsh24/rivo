@@ -51,7 +51,7 @@ class PetResource extends JsonResource
             'training_level' => $this->training_level,
             'is_vaccinated' => (bool) $this->is_vaccinated,
             'gender' => $this->gender,
-            'photo' => $this->photo ? url('storage/' . $this->photo) : null,
+            'photo' => upload_url($this->photo, defaultDir: 'pets'),
             'level' => $level,
             'level_title' => $levelTitle,
             'posts_count' => $postsCount,
