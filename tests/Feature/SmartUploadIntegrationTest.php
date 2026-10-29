@@ -178,4 +178,19 @@ class SmartUploadIntegrationTest extends TestCase
         $externalUrl = 'https://images.unsplash.com/photo-1543466835-00a7907e9de1';
         $this->assertEquals($externalUrl, upload_url($externalUrl));
     }
+
+    public function test_security_hardening_in_v1_0_3(): void
+    {
+        // 1. Anti-path traversal guard in Upload::delete
+        $this->assertFalse(Upload::delete('../secret.env'));
+        $this->assertFalse(Upload::delete('avatars/../../etc/passwd'));
+        $this->assertFalse(Upload::delete("avatars/image.webp\0extra"));
+
+        // 2. Unsafe data URI restriction (only data:image/ is allowed)
+        $safeDataUri = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+        $this->assertEquals($safeDataUri, upload_url($safeDataUri));
+
+        $unsafeDataUri = 'data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==';
+        $this->assertNull(upload_url($unsafeDataUri));
+    }
 }
