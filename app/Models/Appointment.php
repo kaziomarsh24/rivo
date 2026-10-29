@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use KaziOmar\AtomicCache\Traits\AutoClearsCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Appointment extends Model
 {
-    use HasFactory;
+    use HasFactory, AutoClearsCache;
 
     protected $fillable = [
         'user_id',
@@ -24,6 +25,8 @@ class Appointment extends Model
         'reminder',
         'status',
     ];
+
+    protected array $cacheParents = ['pet', 'user'];
 
     protected $casts = [
         'datetime' => 'datetime',

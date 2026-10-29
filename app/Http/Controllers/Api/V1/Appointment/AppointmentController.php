@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Appointment;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Appointment\StoreAppointmentNoteRequest;
 use App\Http\Requests\Appointment\StoreAppointmentRequest;
+use App\Http\Requests\Appointment\UpdateAppointmentRequest;
 use App\Http\Requests\Appointment\UpdateAppointmentStatusRequest;
 use App\Http\Resources\Appointment\AppointmentNoteResource;
 use App\Http\Resources\Appointment\AppointmentResource;
@@ -83,6 +84,18 @@ class AppointmentController extends Controller
     }
 
     /**
+     * Update the specified appointment.
+     */
+    public function update(UpdateAppointmentRequest $request, Appointment $appointment)
+    {
+        Gate::authorize('update', $appointment);
+
+        $updatedAppointment = $this->appointmentService->update($appointment->id, $request->validated());
+
+        return response_success('Appointment updated successfully', new AppointmentResource($updatedAppointment));
+    }
+
+    /**
      * Update appointment status
      */
     public function updateStatus(UpdateAppointmentStatusRequest $request, Appointment $appointment)
@@ -92,6 +105,18 @@ class AppointmentController extends Controller
         $updatedAppointment = $this->appointmentService->update($appointment->id, ['status' => $request->status]);
 
         return response_success('Appointment status updated', new AppointmentResource($updatedAppointment));
+    }
+
+    /**
+     * Remove the specified appointment.
+     */
+    public function destroy(Appointment $appointment)
+    {
+        Gate::authorize('delete', $appointment);
+
+        $this->appointmentService->delete($appointment->id);
+
+        return response_success('Appointment deleted successfully');
     }
 
     /**
@@ -120,8 +145,3 @@ class AppointmentController extends Controller
         return response_success('Notes retrieved', AppointmentNoteResource::collection($notes));
     }
 }
-
-
-
-
-

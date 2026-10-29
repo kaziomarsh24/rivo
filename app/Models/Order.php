@@ -38,6 +38,8 @@ class Order extends Model
         'cancelled_at',
         'rejection_reason',
     ];
+    protected array $cacheParents = ['store'];
+
 
     protected $casts = [
         'delivery_address_json' => 'array',
@@ -102,13 +104,13 @@ class Order extends Model
         return $query->where('status', 'cancelled');
     }
 
-    public function getRelatedCacheTags(): array
-    {
-        return [
-            "stores:{$this->store_id}:orders",
-            "stores:{$this->store_id}:dashboard",
-            "stores:{$this->store_id}:analytics",
-            "stores:{$this->store_id}",
-        ];
-    }
+    // public function getRelatedCacheTags(): array
+    // {
+    //     // return [
+    //     //     // "stores:{$this->store_id}:orders",
+    //     //     "stores:{$this->store_id}:dashboard",
+    //     //     "stores:{$this->store_id}:analytics",
+    //     //     "stores:{$this->store_id}",
+    //     // ];
+    // }
 }
