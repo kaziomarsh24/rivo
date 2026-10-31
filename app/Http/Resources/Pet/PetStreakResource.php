@@ -15,3 +15,4 @@ class PetStreakResource extends JsonResource
         return $this->resource;
     }
 }
+

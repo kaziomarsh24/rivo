@@ -22,3 +22,4 @@ class PetActivityDashboardResource extends JsonResource
         ];
     }
 }
+

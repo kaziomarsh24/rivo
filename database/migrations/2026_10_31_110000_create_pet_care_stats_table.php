@@ -31,3 +31,4 @@ return new class extends Migration
         Schema::dropIfExists('pet_care_stats');
     }
 };
+

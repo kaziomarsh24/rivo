@@ -35,3 +35,4 @@ class PetCareStat extends Model
         return $this->belongsTo(Pet::class);
     }
 }
+

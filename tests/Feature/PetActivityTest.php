@@ -255,3 +255,4 @@ class PetActivityTest extends TestCase
         $streaksResponse->assertForbidden();
     }
 }
+
