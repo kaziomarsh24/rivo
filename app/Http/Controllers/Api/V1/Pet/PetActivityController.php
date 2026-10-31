@@ -26,11 +26,10 @@ class PetActivityController extends Controller
 
         $data = $this->activityService->getActivityDashboard($pet);
 
-        return response()->json([
-            'ok' => true,
-            'message' => 'Activity dashboard retrieved successfully',
-            'data' => new PetActivityDashboardResource($data),
-        ]);
+        return response_success(
+            'Activity dashboard retrieved successfully',
+            new PetActivityDashboardResource($data)
+        );
     }
 
     /**
@@ -42,11 +41,10 @@ class PetActivityController extends Controller
 
         $data = $this->activityService->getStreaks($pet);
 
-        return response()->json([
-            'ok' => true,
-            'message' => 'Pet streaks retrieved successfully',
-            'data' => new PetStreakResource($data),
-        ]);
+        return response_success(
+            'Pet streaks retrieved successfully',
+            new PetStreakResource($data)
+        );
     }
 
     /**
@@ -59,16 +57,13 @@ class PetActivityController extends Controller
         try {
             $data = $this->activityService->getSingleStreak($pet, $type);
         } catch (InvalidArgumentException $e) {
-            return response()->json([
-                'ok' => false,
-                'message' => $e->getMessage(),
-            ], 422);
+            return response_error($e->getMessage(), [], 422);
         }
 
-        return response()->json([
-            'ok' => true,
-            'message' => ucfirst($type) . ' streak retrieved successfully',
-            'data' => new PetStreakResource($data),
-        ]);
+        return response_success(
+            ucfirst($type) . ' streak retrieved successfully',
+            new PetStreakResource($data)
+        );
     }
 }
+
