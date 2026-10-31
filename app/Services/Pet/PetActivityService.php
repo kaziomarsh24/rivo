@@ -99,7 +99,10 @@ class PetActivityService extends BaseService
         $endOfWeek = Carbon::now()->endOfWeek();
 
         $weekWalks = WalkSession::where('pet_id', $pet->id)
-            ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
+            ->where(function ($query) use ($startOfWeek, $endOfWeek) {
+                $query->whereBetween('created_at', [$startOfWeek, $endOfWeek])
+                    ->orWhereBetween('start_time', [$startOfWeek, $endOfWeek]);
+            })
             ->get();
 
         $weekWalkDistance = round((float) $weekWalks->sum('distance_km'), 1);
@@ -110,16 +113,21 @@ class PetActivityService extends BaseService
             'distance_km' => $weekWalkDistance,
             'distance_formatted' => $weekWalkDistance . ' km',
             'walks_this_week' => $weekWalkCount,
-            'subtitle' => $weekWalkCount . ' walks this week',
+            'subtitle' => $weekWalkCount === 1 ? '1 walk this week' : "{$weekWalkCount} walks this week",
             'all_time_distance_km' => $allTimeWalkDistance,
             'icon' => 'paw_blue',
         ];
 
-        // 5. Metric Card 2: Training Lessons
+        // 5. Metric Card 2: Training Lessons (computed dynamically from completed progress)
         $completedLessonsCount = PetTrainingProgress::where('pet_id', $pet->id)
             ->where('status', 'completed')
             ->count();
-        $tpGained = (int) $trainingStat->total_tp;
+        $tpGained = (int) PetTrainingProgress::where('pet_id', $pet->id)
+            ->where('status', 'completed')
+            ->sum('tp_earned');
+        if ($tpGained === 0 && $trainingStat->total_tp > 0) {
+            $tpGained = (int) $trainingStat->total_tp;
+        }
 
         $trainingLessons = [
             'sessions_count' => $completedLessonsCount,
@@ -129,9 +137,15 @@ class PetActivityService extends BaseService
             'icon' => 'certificate_yellow',
         ];
 
-        // 6. Metric Card 3: Care Tasks
-        $completedCareTasksCount = (int) CareTaskLog::where('pet_id', $pet->id)->count();
-        $careXpGained = (int) ($careStat->total_xp > 0 ? $careStat->total_xp : CareTaskLog::where('pet_id', $pet->id)->sum('xp_earned'));
+        // 6. Metric Card 3: Care Tasks (computed dynamically from care logs & stats)
+        $completedCareTasksCount = max(
+            (int) $careStat->total_completed_tasks,
+            (int) CareTaskLog::where('pet_id', $pet->id)->count()
+        );
+        $careXpGained = max(
+            (int) $careStat->total_xp,
+            (int) CareTaskLog::where('pet_id', $pet->id)->sum('xp_earned')
+        );
 
         $careTasks = [
             'completed_count' => $completedCareTasksCount,
@@ -299,7 +313,10 @@ class PetActivityService extends BaseService
             switch ($type) {
                 case 'walk':
                     $isCompleted = WalkSession::where('pet_id', $pet->id)
-                        ->whereDate('created_at', $dateString)
+                        ->where(function ($query) use ($dateString) {
+                            $query->whereDate('created_at', $dateString)
+                                ->orWhereDate('start_time', $dateString);
+                        })
                         ->exists();
                     break;
                 case 'training':
@@ -361,7 +378,10 @@ class PetActivityService extends BaseService
 
         // 2. Walks completed today
         $walks = WalkSession::where('pet_id', $pet->id)
-            ->whereDate('created_at', $today)
+            ->where(function ($query) use ($today) {
+                $query->whereDate('created_at', $today)
+                    ->orWhereDate('start_time', $today);
+            })
             ->get();
 
         foreach ($walks as $walk) {
@@ -506,9 +526,7 @@ class PetActivityService extends BaseService
                 $nextRank = $tier['next'];
                 $targetTp = $tier['target'];
                 $tpToNext = max(0, $targetTp - $tp);
-                $tierSpan = $tier['target'] - $tier['min'];
-                $earnedInTier = $tp - $tier['min'];
-                $progressPercentage = $tierSpan > 0 ? round(($earnedInTier / $tierSpan) * 100, 1) : 100.0;
+                $progressPercentage = $targetTp > 0 ? round(($tp / $targetTp) * 100, 1) : 100.0;
                 break;
             }
         }
