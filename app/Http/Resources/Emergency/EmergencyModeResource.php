@@ -22,3 +22,4 @@ class EmergencyModeResource extends JsonResource
         ];
     }
 }
+

@@ -221,3 +221,4 @@ class EmergencyService extends BaseService
         return round($earthRadius * $c, 1);
     }
 }
+

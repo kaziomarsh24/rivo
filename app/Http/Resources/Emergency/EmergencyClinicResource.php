@@ -44,3 +44,4 @@ class EmergencyClinicResource extends JsonResource
         ];
     }
 }
+

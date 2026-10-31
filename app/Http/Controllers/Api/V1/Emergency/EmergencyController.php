@@ -71,3 +71,4 @@ class EmergencyController extends Controller
         );
     }
 }
+

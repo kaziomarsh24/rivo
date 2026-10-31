@@ -152,3 +152,4 @@ class EmergencyClinicTest extends TestCase
         $response->assertUnauthorized();
     }
 }
+
