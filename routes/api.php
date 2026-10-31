@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\V1\Payment\SubscriptionController as StripeSubscrip
 use App\Http\Controllers\Api\V1\SubscriptionController;
 use App\Http\Controllers\Api\V1\Webhook\RevenueCatWebhookController;
 use App\Http\Controllers\Api\V1\Ai\AiController;
+use App\Http\Controllers\Api\V1\Emergency\EmergencyController;
 use App\Http\Controllers\Api\V1\EmergencyContact\EmergencyContactController;
 use App\Http\Controllers\Api\V1\Appointment\AppointmentController;
 use App\Http\Controllers\Api\V1\Pet\PetActivityController;
@@ -123,6 +124,13 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->prefix('v1')->name('api.v1.
 
     // --- Emergency Contacts ---
     Route::apiResource('emergency-contacts', EmergencyContactController::class)->except(['show']);
+
+    // --- Emergency 24/7 Mode & Clinics Module ---
+    Route::controller(EmergencyController::class)->prefix('emergency')->group(function () {
+        Route::get('mode', 'mode');
+        Route::get('clinics', 'clinics');
+        Route::get('clinics/{clinic}', 'show');
+    });
 
     // --- Walks Module ---
     Route::controller(WalkController::class)->prefix('pets/{pet}')->group(function () {
