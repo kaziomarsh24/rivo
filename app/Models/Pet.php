@@ -86,6 +86,11 @@ class Pet extends Model
         return $this->hasMany(CareTask::class);
     }
 
+    public function careStats()
+    {
+        return $this->hasOne(PetCareStat::class);
+    }
+
     public function careTaskLogs(): HasMany
     {
         return $this->hasMany(CareTaskLog::class);

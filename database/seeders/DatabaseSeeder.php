@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             MarketplaceSeeder::class,
             TrainingSeeder::class,
             AppointmentAndEmergencySeeder::class,
+            ActivityAndStreakSeeder::class,
         ]);
     }
 }

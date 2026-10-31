@@ -99,6 +99,10 @@ class WalkService extends BaseService
             $stat->total_xp += $totalXpEarned;
             $stat->save();
 
+            if (class_exists(\KaziOmar\AtomicCache\Facades\AtomicCache::class)) {
+                \KaziOmar\AtomicCache\Facades\AtomicCache::tags(['pet_activity', 'pet_' . $petId])->flush();
+            }
+
             return [
                 'walk' => $walk,
                 'level_up' => $levelUp,

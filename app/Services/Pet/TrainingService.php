@@ -274,6 +274,10 @@ class TrainingService extends BaseService
         $walkStat->total_xp += $xpEarned;
         $walkStat->save();
 
+        if (class_exists(\KaziOmar\AtomicCache\Facades\AtomicCache::class)) {
+            \KaziOmar\AtomicCache\Facades\AtomicCache::tags(['pet_activity', 'pet_' . $pet->id])->flush();
+        }
+
         return [
             'ok' => true,
             'message' => "Lesson '{$lesson->title}' completed successfully!",

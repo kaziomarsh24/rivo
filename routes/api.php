@@ -27,6 +27,7 @@ use App\Http\Controllers\Api\V1\Webhook\RevenueCatWebhookController;
 use App\Http\Controllers\Api\V1\Ai\AiController;
 use App\Http\Controllers\Api\V1\EmergencyContact\EmergencyContactController;
 use App\Http\Controllers\Api\V1\Appointment\AppointmentController;
+use App\Http\Controllers\Api\V1\Pet\PetActivityController;
 use App\Http\Controllers\Api\V1\Training\TrainingController;
 
 // Social Module Controllers
@@ -146,6 +147,13 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->prefix('v1')->name('api.v1.
         Route::post('pets/{pet}/lessons/{lesson}/complete', 'complete');
         Route::post('pets/{pet}/lessons/{lesson}/bookmark', 'toggleBookmark');
         Route::get('pets/{pet}/bookmarks', 'bookmarks');
+    });
+
+    // --- Activity & Streaks Module ---
+    Route::controller(PetActivityController::class)->prefix('pets/{pet}')->group(function () {
+        Route::get('activity-dashboard', 'dashboard');
+        Route::get('streaks', 'streaks');
+        Route::get('streaks/{type}', 'singleStreak');
     });
 
     // --- RivoCare AI ---

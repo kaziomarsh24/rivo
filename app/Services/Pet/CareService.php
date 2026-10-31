@@ -114,6 +114,38 @@ class CareService
         $stat->current_level = floor($stat->total_xp / 1000) + 1;
         $stat->save();
 
+        // Update PetCareStat
+        $careStat = $pet->careStats()->firstOrCreate(
+            ['pet_id' => $pet->id],
+            ['total_completed_tasks' => 0, 'total_xp' => 0, 'current_streak_days' => 0, 'longest_streak_days' => 0]
+        );
+        $careStat->total_completed_tasks += 1;
+        $careStat->total_xp += $xpEarned;
+
+        $today = Carbon::today();
+        $lastCare = $careStat->last_care_date ? Carbon::parse($careStat->last_care_date)->startOfDay() : null;
+
+        if ($lastCare) {
+            $daysDiff = $today->diffInDays($lastCare);
+            if ($daysDiff == 1) {
+                $careStat->current_streak_days += 1;
+            } elseif ($daysDiff > 1) {
+                $careStat->current_streak_days = 1;
+            }
+        } else {
+            $careStat->current_streak_days = 1;
+        }
+
+        if ($careStat->current_streak_days > $careStat->longest_streak_days) {
+            $careStat->longest_streak_days = $careStat->current_streak_days;
+        }
+        $careStat->last_care_date = $today->toDateString();
+        $careStat->save();
+
+        if (class_exists(\KaziOmar\AtomicCache\Facades\AtomicCache::class)) {
+            \KaziOmar\AtomicCache\Facades\AtomicCache::tags(['pet_activity', 'pet_' . $pet->id])->flush();
+        }
+
         return $log;
     }
 
