@@ -99,3 +99,4 @@ class VaccinationSeeder extends Seeder
         $pet->update(['is_vaccinated' => true]);
     }
 }
+

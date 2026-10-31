@@ -126,3 +126,4 @@ class VaccinationController extends Controller
         return response_success('Vaccination deleted successfully');
     }
 }
+

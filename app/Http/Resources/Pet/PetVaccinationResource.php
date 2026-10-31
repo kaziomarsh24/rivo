@@ -33,3 +33,4 @@ class PetVaccinationResource extends JsonResource
         ];
     }
 }
+

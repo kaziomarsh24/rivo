@@ -241,3 +241,4 @@ class VaccinationService extends BaseService
         AtomicCache::clearTags(['pet_vaccinations', "pet_{$pet->id}"]);
     }
 }
+

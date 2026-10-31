@@ -27,3 +27,4 @@ class UpdateVaccinationRequest extends FormRequest
         ];
     }
 }
+
