@@ -49,7 +49,7 @@ class EmergencyClinic extends Model
     /**
      * File fields for SmartUpload auto-purge on delete or update.
      */
-    protected array $uploadPurgeColumns = ['photo'];
+    protected array $purgeableFiles = ['photo'];
 
     /**
      * Scope to only include active clinics.

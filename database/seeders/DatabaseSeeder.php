@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             AppointmentAndEmergencySeeder::class,
             ActivityAndStreakSeeder::class,
             EmergencyClinicSeeder::class,
+            VaccinationSeeder::class,
         ]);
     }
 }

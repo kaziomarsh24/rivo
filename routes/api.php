@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\Pet\CareController;
 use App\Http\Controllers\Api\V1\Pet\HealthVaultController;
+use App\Http\Controllers\Api\V1\Pet\VaccinationController;
 use App\Http\Controllers\Api\V1\Pet\LostPetReportController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
@@ -112,6 +113,17 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->prefix('v1')->name('api.v1.
         Route::delete('documents/{document}', 'deleteDocument');
         Route::get('weight', 'getWeightLogs');
         Route::post('weight', 'logWeight');
+    });
+
+    // --- Pet Vaccinations Module ---
+    Route::controller(VaccinationController::class)->prefix('pets/{pet}/vaccinations')->group(function () {
+        Route::get('/', 'index');
+        Route::get('summary', 'summary');
+        Route::post('/', 'store');
+        Route::get('{vaccination}', 'show');
+        Route::post('{vaccination}', 'update');
+        Route::put('{vaccination}', 'update');
+        Route::delete('{vaccination}', 'destroy');
     });
     
     // --- Appointments ---

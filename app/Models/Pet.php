@@ -120,4 +120,9 @@ class Pet extends Model
     {
         return $this->hasMany(PetTrainingBookmark::class);
     }
+
+    public function vaccinations(): HasMany
+    {
+        return $this->hasMany(PetVaccination::class);
+    }
 }

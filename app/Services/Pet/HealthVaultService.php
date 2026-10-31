@@ -24,13 +24,69 @@ class HealthVaultService
         // 1. Calculate Health Score
         $healthScoreInfo = $this->calculateHealthScore($pet);
 
-        // 2. Get Upcoming Vaccinations (Appointments type='vaccination')
-        $upcomingVaccines = $pet->appointments()
+        // 2. Get Upcoming Vaccinations & Summary
+        $vaccinationSummary = app(VaccinationService::class)->getVaccinationSummary($pet);
+        $vaccinationRecords = $pet->vaccinations()->orderBy('due_at', 'asc')->get();
+
+        // Get upcoming appointments for AI insights
+        $upcomingVaccineAppointments = $pet->appointments()
             ->where('type', 'vaccination')
             ->where('datetime', '>=', now())
             ->orderBy('datetime', 'asc')
             ->take(2)
             ->get();
+
+        if ($vaccinationRecords->isNotEmpty()) {
+            $vaccinationsData = [
+                'total_count' => $vaccinationSummary['total_count'],
+                'up_to_date_count' => $vaccinationSummary['up_to_date_count'],
+                'due_soon_count' => $vaccinationSummary['due_soon_count'],
+                'overdue_count' => $vaccinationSummary['overdue_count'],
+                'overall_status' => $vaccinationSummary['overall_status'],
+                'overall_badge' => $vaccinationSummary['overall_badge'],
+                'upcoming_count' => $vaccinationSummary['due_soon_count'] + $vaccinationSummary['overdue_count'],
+                'upcoming_list' => $vaccinationRecords->take(2)->map(function ($v) {
+                    return [
+                        'id' => $v->id,
+                        'title' => $v->name,
+                        'date' => Carbon::parse($v->due_at)->format('d M Y'),
+                        'days_left' => $v->days_remaining,
+                        'status' => $v->status,
+                        'status_badge' => $v->status_badge,
+                    ];
+                })->values(),
+            ];
+        } else {
+            $vaccinationsData = [
+                'total_count' => 0,
+                'up_to_date_count' => 0,
+                'due_soon_count' => 0,
+                'overdue_count' => 0,
+                'overall_status' => 'no_records',
+                'overall_badge' => [
+                    'label' => 'No Records',
+                    'color' => '#6B7280',
+                    'background_color' => '#F3F4F6',
+                    'icon' => 'shield_question',
+                ],
+                'upcoming_count' => $upcomingVaccineAppointments->count(),
+                'upcoming_list' => $upcomingVaccineAppointments->map(function ($v) {
+                    return [
+                        'id' => $v->id,
+                        'title' => $v->title,
+                        'date' => $v->datetime->format('d M Y'),
+                        'days_left' => floor(now()->diffInDays($v->datetime)),
+                        'status' => 'scheduled',
+                        'status_badge' => [
+                            'label' => 'Scheduled',
+                            'color' => '#3B82F6',
+                            'background_color' => '#DBEAFE',
+                            'icon' => 'calendar',
+                        ],
+                    ];
+                })->values(),
+            ];
+        }
 
         // 3. Get Recent Weight
         $currentWeight = $pet->weightLogs()->latest('logged_at')->first();
@@ -39,21 +95,11 @@ class HealthVaultService
         $documentsCount = $pet->healthDocuments()->count();
 
         // 5. Get AI Insight
-        $aiInsight = $this->aiService->getAppointmentInsights($upcomingVaccines);
+        $aiInsight = $this->aiService->getAppointmentInsights($upcomingVaccineAppointments);
 
         return [
             'health_score' => $healthScoreInfo,
-            'vaccinations' => [
-                'upcoming_count' => $pet->appointments()->where('type', 'vaccination')->where('datetime', '>=', now())->count(),
-                'upcoming_list' => $upcomingVaccines->map(function ($v) {
-                    return [
-                        'id' => $v->id,
-                        'title' => $v->title,
-                        'date' => $v->datetime->format('d M Y'),
-                        'days_left' => floor(now()->diffInDays($v->datetime)),
-                    ];
-                })
-            ],
+            'vaccinations' => $vaccinationsData,
             'weight_tracking' => [
                 'current_weight_kg' => $currentWeight ? $currentWeight->weight_kg : $pet->weight,
                 'last_updated' => $currentWeight ? $currentWeight->logged_at->diffForHumans() : 'No recent logs'
@@ -125,12 +171,17 @@ class HealthVaultService
         }
 
         // Vaccinations (20 points)
-        $hasMissedVaccine = $pet->appointments()
-            ->where('type', 'vaccination')
-            ->where('datetime', '<', now())
-            ->where('status', 'scheduled') // Assuming status field exists
-            ->exists();
-        $vaccineScore = $hasMissedVaccine ? 0 : 20;
+        if ($pet->vaccinations()->exists()) {
+            $hasOverdue = $pet->vaccinations()->where('due_at', '<', now()->startOfDay())->exists();
+            $vaccineScore = $hasOverdue ? 0 : 20;
+        } else {
+            $hasMissedVaccine = $pet->appointments()
+                ->where('type', 'vaccination')
+                ->where('datetime', '<', now())
+                ->where('status', 'scheduled')
+                ->exists();
+            $vaccineScore = $hasMissedVaccine ? 0 : 20;
+        }
 
         // Weight (10 points)
         $hasRecentWeight = $pet->weightLogs()
