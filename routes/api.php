@@ -27,6 +27,7 @@ use App\Http\Controllers\Api\V1\Webhook\RevenueCatWebhookController;
 use App\Http\Controllers\Api\V1\Ai\AiController;
 use App\Http\Controllers\Api\V1\EmergencyContact\EmergencyContactController;
 use App\Http\Controllers\Api\V1\Appointment\AppointmentController;
+use App\Http\Controllers\Api\V1\Training\TrainingController;
 
 // Social Module Controllers
 use App\Http\Controllers\Api\V1\Social\MatchController;
@@ -135,6 +136,17 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->prefix('v1')->name('api.v1.
     
     Route::apiResource('walk-routes', WalkRouteController::class)->except(['update', 'show']);
     Route::put('walk-routes/{walk_route}/toggle-favorite', [WalkRouteController::class, 'toggleFavorite']);
+
+    // --- Training Module ---
+    Route::controller(TrainingController::class)->prefix('training')->group(function () {
+        Route::get('home/{pet}', 'home');
+        Route::get('categories', 'categories');
+        Route::get('lessons', 'lessons');
+        Route::get('lessons/{lesson}', 'show');
+        Route::post('pets/{pet}/lessons/{lesson}/complete', 'complete');
+        Route::post('pets/{pet}/lessons/{lesson}/bookmark', 'toggleBookmark');
+        Route::get('pets/{pet}/bookmarks', 'bookmarks');
+    });
 
     // --- RivoCare AI ---
     Route::controller(AiController::class)->prefix('ai')->name('ai.')->group(function () {

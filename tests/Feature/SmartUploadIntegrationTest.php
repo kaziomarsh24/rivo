@@ -7,7 +7,7 @@ use App\Models\Pet;
 use App\Models\Store;
 use App\Models\Review;
 use App\Models\StoreDocument;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -18,7 +18,7 @@ use Tests\TestCase;
 
 class SmartUploadIntegrationTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     protected function setUp(): void
     {

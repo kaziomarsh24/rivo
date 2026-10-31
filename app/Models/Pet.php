@@ -100,4 +100,19 @@ class Pet extends Model
     {
         return $this->hasMany(HealthDocument::class);
     }
+
+    public function trainingStats()
+    {
+        return $this->hasOne(PetTrainingStat::class);
+    }
+
+    public function trainingProgress(): HasMany
+    {
+        return $this->hasMany(PetTrainingProgress::class);
+    }
+
+    public function trainingBookmarks(): HasMany
+    {
+        return $this->hasMany(PetTrainingBookmark::class);
+    }
 }
